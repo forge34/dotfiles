@@ -1,0 +1,13 @@
+snippet rrh "add request handler" b
+	(req,res,next) => {
+		${0:${VISUAL}}
+	}
+
+snippet arrh "Add async request handler" b
+	async (req,res) => {
+		${0:${VISUAL}}
+	}
+
+snippet jwt "add jwt auth function" b
+  passport.authenticate("jwt", { session: false }),
+
