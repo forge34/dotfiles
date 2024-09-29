@@ -47,6 +47,8 @@ map("n", "<F9>", ":FloatermNext<CR>", desc("next floatterm"))
 map("n", "<F9>", "<C-\\><C-n>:FloatermNext<CR>", desc("next floatterm"))
 map("n", "<F12>", ":FloatermToggle<CR>", desc("toggle floatterm"))
 map("t", "<F12>", "<C-\\><C-n>:FloatermToggle<CR>", desc("Toggle floatterm"))
+map("n", "<F6>", ":floatermkill<cr>", desc("kill current floatterm"))
+map("t", "<F6>", "<C-\\><C-n>:FloatermKill<CR>", desc("Kill current floatterm"))
 
 -- luasnip
 local ls = require("luasnip")
