@@ -1,13 +1,33 @@
-snippet rrh "add request handler" b
+snippet rrh "insert request handler" b
 	(req,res,next) => {
 		${0:${VISUAL}}
 	}
 
-snippet arrh "Add async request handler" b
+snippet arrh "insert async request handler" b
 	async (req,res) => {
 		${0:${VISUAL}}
 	}
 
-snippet jwt "add jwt auth function" b
+snippet jwt "insert jwt auth function" b
   passport.authenticate("jwt", { session: false }),
 
+snippet arr "insert arrow function" b
+  () => {${1}}
+
+snippet asarr "insert async arrow function" b
+  async () => {${1}}
+
+snippet t "insert test function" b
+  test("${1}" , () => {
+    ${2}
+  })
+
+snippet ast "insert async test function" b
+  test("${1}" , async () => {
+    ${2}
+  })
+
+snippet dsc "insert describe function" b
+  describe("${1}" , () => {
+    ${2}
+  })
