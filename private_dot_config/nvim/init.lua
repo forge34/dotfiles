@@ -1,43 +1,17 @@
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
-vim.opt.statuscolumn = "%l %r%s"
-vim.g.sass_variables_file = "_variables.scss"
+
 require("bluloco").setup({
   transparent = true,
   italics = true,
 })
 vim.cmd("colorscheme bluloco")
 
--- nvim-cmp config
-local cmp = require("cmp")
-local config = cmp.get_config()
-config.window = {
-  completion = cmp.config.window.bordered(),
-  documentation = cmp.config.window.bordered(),
-}
-
-table.insert(config.sources, { name = "scss" })
-table.insert(config.sources, { name = "lazydev" })
-
-cmp.setup(config)
-
-require("lspconfig").somesass_ls.setup({})
 -- luasnip config
-require("luasnip.loaders.from_snipmate").load()
+require("luasnip.loaders.from_snipmate").lazy_load()
 require("luasnip.loaders.from_vscode").lazy_load()
 
 require("lspconfig").prismals.setup({})
--- List snippets
-local list_snips = function()
-  local ft_list = require("luasnip").available()[vim.o.filetype]
-  local ft_snips = {}
-  for _, item in pairs(ft_list) do
-    ft_snips[item.trigger] = item.name
-  end
-  print(vim.inspect(ft_snips))
-end
-
-vim.api.nvim_create_user_command("SnipList", list_snips, {})
 
 -- incline nvim
 local helpers = require("incline.helpers")
@@ -49,9 +23,6 @@ require("incline").setup({
   },
   render = function(props)
     local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
-    if filename == "" then
-      filename = "[No Name]"
-    end
     local ft_icon, ft_color = devicons.get_icon_color(filename)
     local modified = vim.bo[props.buf].modified
     return {
@@ -62,4 +33,32 @@ require("incline").setup({
       guibg = "#44406e",
     }
   end,
+})
+
+require("colorizer").setup({
+  filetypes = { "*" },
+  user_default_options = {
+    RGB = true, -- #RGB hex codes
+    RRGGBB = true, -- #RRGGBB hex codes
+    names = true, -- "Name" codes like Blue or blue
+    RRGGBBAA = true, -- #RRGGBBAA hex codes
+    AARRGGBB = false, -- 0xAARRGGBB hex codes
+    rgb_fn = true, -- CSS rgb() and rgba() functions
+    hsl_fn = true, -- CSS hsl() and hsla() functions
+    css = false, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+    css_fn = false, -- Enable all CSS *functions*: rgb_fn, hsl_fn
+    -- Available modes for `mode`: foreground, background,  virtualtext
+    mode = "background", -- Set the display mode.
+    -- Available methods are false / true / "normal" / "lsp" / "both"
+    -- True is same as normal
+    tailwind = true, -- Enable tailwind colors
+    -- parsers can contain values used in |user_default_options|
+    sass = { enable = true, parsers = { "css" } }, -- Enable sass colors
+    virtualtext = "■",
+    -- update color values even if buffer is not focused
+    -- example use: cmp_menu, cmp_docs
+    always_update = false,
+  },
+  -- all the sub-options of filetypes apply to buftypes
+  buftypes = {},
 })
