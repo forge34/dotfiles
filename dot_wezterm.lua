@@ -7,7 +7,7 @@ local config = wezterm.config_builder()
 -- This is where you actually apply your config choices
 config.default_prog = { "/usr/bin/zsh" }
 config.font = wezterm.font("0xProto Nerd Font")
-config.font_size = 12
+config.font_size = 10
 config.color_scheme = "nightfox"
 -- config.enable_tab_bar = false
 config.window_decorations = "RESIZE"
@@ -22,6 +22,16 @@ config.keys = {
 	{
 		key = "F11",
 		action = wezterm.action.ToggleFullScreen,
+	},
+}
+
+local dimmer = { brightness = 0.2 }
+config.background = {
+	{
+		source = {
+			File = "./bg-4.png",
+		},
+		hsb = dimmer,
 	},
 }
 return config
