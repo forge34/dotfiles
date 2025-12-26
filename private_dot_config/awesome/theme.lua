@@ -11,24 +11,32 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font = "sans 8"
+-- Use your preferred Nerd Font
+theme.font = "0xProto Nerd Font 10"
 
-theme.bg_normal = "#222222"
-theme.bg_focus = "#535d6c"
-theme.bg_urgent = "#ff0000"
-theme.bg_minimize = "#444444"
+-- The Deep Navy background from your Neovim/WezTerm
+theme.bg_normal = "#222436"
+theme.bg_focus = "#2d3047" -- Slightly lighter for focused items
+theme.bg_urgent = "#ff5555"
+theme.bg_minimize = "#1a1b26"
 theme.bg_systray = theme.bg_normal
 
-theme.fg_normal = "#aaaaaa"
+-- The soft white/blue foreground from your Neovim
+theme.fg_normal = "#c8d3f5"
 theme.fg_focus = "#ffffff"
 theme.fg_urgent = "#ffffff"
-theme.fg_minimize = "#ffffff"
+theme.fg_minimize = "#828bb8"
 
-theme.useless_gap = dpi(0)
-theme.border_width = dpi(1)
-theme.border_normal = "#000000"
-theme.border_focus = "#535d6c"
-theme.border_marked = "#91231c"
+-- Gaps and Borders
+theme.useless_gap = dpi(6)
+theme.border_width = dpi(2)
+theme.border_normal = "#1b1d2b" -- Darker border for inactive
+theme.border_focus = "#3d59a1" -- Bluloco Blue/Teal for active
+
+theme.taglist_bg_focus = "#3d59a1"
+theme.taglist_fg_focus = "#ffffff"
+theme.taglist_bg_occupied = "#222436"
+theme.taglist_fg_occupied = "#828bb8"
 
 -- There are other variable sets
 -- overriding the default one when
@@ -44,9 +52,9 @@ theme.border_marked = "#91231c"
 --theme.taglist_bg_focus = "#ff0000"
 
 -- Generate taglist squares:
-local taglist_square_size = dpi(4)
-theme.taglist_squares_sel = theme_assets.taglist_squares_sel(taglist_square_size, theme.fg_normal)
-theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(taglist_square_size, theme.fg_normal)
+-- local taglist_square_size = dpi(4)
+-- theme.taglist_squares_sel = theme_assets.taglist_squares_sel(taglist_square_size, theme.fg_normal)
+-- theme.taglist_squares_unsel = theme_assets.taglist_squares_unsel(taglist_square_size, theme.fg_normal)
 
 -- Variables set for theming notifications:
 -- notification_font
@@ -118,7 +126,7 @@ theme.awesome_icon = theme_assets.awesome_icon(theme.menu_height, theme.bg_focus
 
 -- Define the icon theme for application icons. If not set then the icons
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
-theme.icon_theme = nil
+theme.icon_theme = "Papirus-Dark"
 
 return theme
 

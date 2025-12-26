@@ -3,12 +3,103 @@ local awful = require("awful")
 require("awful.autofocus")
 local wibox = require("wibox")
 local beautiful = require("beautiful")
-
--- {{{ Wibar
+local logout_menu_widget = require("awesome-wm-widgets.logout-menu-widget.logout-menu")
 local mytextclock = wibox.widget.textclock()
 local mykeyboardlayout = awful.widget.keyboardlayout()
-local mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = mymainmenu })
+-- local mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = mymainmenu })
+local volume_widget = require("awesome-wm-widgets.pactl-widget.volume")
 
+local s_width = awful.screen.focused().geometry.width
+local function create_fetch_widget(s)
+	local fetch_container = wibox({
+		screen = s,
+		x = (s_width / 5) * 4 - 200,
+		y = 100,
+		width = 380,
+		height = 280,
+		bg = "#222436", -- Solid Neovim Navy (removes blur issues)
+		border_width = 2, -- Solid border
+		border_color = "#3d59a1", -- Bluloco Blue border
+		ontop = false,
+		visible = true,
+		type = "desktop",
+	})
+
+	-- Shape the box with slight rounding to match your windows
+	fetch_container.shape = function(cr, w, h)
+		gears.shape.rounded_rect(cr, w, h, 8)
+	end
+
+	fetch_container:setup({
+		{
+			{
+				-- HEADER
+				{
+					markup = "<span font='0xProto Nerd Font Bold 16' foreground='#3d59a1'>󰣇 Mohamd Abdeltawab</span>",
+					widget = wibox.widget.textbox,
+				},
+				{
+					markup = "<span font='0xProto Nerd Font Bold 10' foreground='#3d59a1'>@forge</span>",
+					widget = wibox.widget.textbox,
+				},
+
+				{
+					markup = "<span foreground='#444b6a'>--------------------------</span>",
+					widget = wibox.widget.textbox,
+				},
+				-- OS & KERNEL
+				{
+					markup = "<span foreground='#3d59a1'>OS:     </span><span foreground='#c8d3f5'>Ubuntu 24.04</span>",
+					widget = wibox.widget.textbox,
+				},
+				-- CPU LOAD
+				awful.widget.watch(
+					"bash -c \"uptime | awk '{print $(NF-2)}' | sed 's/,//'\"",
+					5,
+					function(widget, stdout)
+						widget:set_markup(
+							"<span foreground='#3d59a1'>CPU:    </span><span foreground='#c8d3f5'>"
+								.. stdout:gsub("\n", "")
+								.. "%</span>"
+						)
+					end
+				),
+				-- RAM
+				awful.widget.watch("bash -c \"free -m | grep Mem | awk '{print $3}'\"", 10, function(widget, stdout)
+					widget:set_markup(
+						"<span foreground='#3d59a1'>RAM:    </span><span foreground='#c8d3f5'>"
+							.. stdout:gsub("\n", "")
+							.. "MB</span>"
+					)
+				end),
+				awful.widget.watch("bash -c \"df -h / | tail -1 | awk '{print $5}'\"", 60, function(widget, stdout)
+					widget:set_markup(
+						"<span foreground='#3d59a1'>DISK:   </span><span foreground='#c8d3f5'>"
+							.. stdout:gsub("\n", "")
+							.. " used</span>"
+					)
+				end),
+				-- UPTIME
+				awful.widget.watch("uptime -p", 60, function(widget, stdout)
+					local uptime = stdout:gsub("\n", ""):gsub("up ", "")
+					widget:set_markup(
+						"<span foreground='#3d59a1'>UP:     </span><span foreground='#c8d3f5'>" .. uptime .. "</span>"
+					)
+				end),
+				{
+					markup = "<span  font='0xProto Nerd Font Bold 12' foreground='#3d59a1'>Welcome to this awesome pc screen!</span>",
+					widget = wibox.widget.textbox,
+				},
+
+				layout = wibox.layout.fixed.vertical,
+				spacing = 8,
+			},
+			margins = 25,
+			widget = wibox.container.margin,
+		},
+		widget = wibox.container.background,
+	})
+end
 -- Create a wibox for each screen and add it
 local taglist_buttons = gears.table.join(
 	awful.button({}, 1, function(t)
@@ -53,10 +144,8 @@ local tasklist_buttons = gears.table.join(
 )
 
 local function set_wallpaper(s)
-	-- Wallpaper
 	if beautiful.wallpaper then
 		local wallpaper = beautiful.wallpaper
-		-- If wallpaper is a function, call it with the screen
 		if type(wallpaper) == "function" then
 			wallpaper = wallpaper(s)
 		end
@@ -64,16 +153,14 @@ local function set_wallpaper(s)
 	end
 end
 
--- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
 awful.screen.connect_for_each_screen(function(s)
 	-- Wallpaper
 	set_wallpaper(s)
-
-	-- Each screen has its own tag table.
+	create_fetch_widget(s)
 	-- awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
-	local names = { "Terminal", "Browser", "Test" }
+	local names = { " Terminal", " Browser", " Edtior" }
 	local l = awful.layout.suit
 	local layouts = { l.tile, l.tile, l.floating, l.floating, l.floating }
 	awful.tag(names, s, layouts)
@@ -101,8 +188,27 @@ awful.screen.connect_for_each_screen(function(s)
 		screen = s,
 		filter = awful.widget.taglist.filter.all,
 		buttons = taglist_buttons,
+		style = {
+			shape = gears.shape.rounded_rect,
+		},
+		layout = {
+			spacing = 5,
+			layout = wibox.layout.fixed.horizontal,
+		},
+		widget_template = {
+			{
+				{
+					id = "text_role",
+					widget = wibox.widget.textbox,
+				},
+				left = 10,
+				right = 10,
+				widget = wibox.container.margin,
+			},
+			id = "background_role",
+			widget = wibox.container.background,
+		},
 	})
-
 	-- Create a tasklist widget
 	s.mytasklist = awful.widget.tasklist({
 		screen = s,
@@ -111,25 +217,48 @@ awful.screen.connect_for_each_screen(function(s)
 	})
 
 	-- Create the wibox
-	s.mywibox = awful.wibar({ position = "top", screen = s })
+	s.mywibox = awful.wibar({ position = "top", screen = s, bg = "#222436", fg = "#f4f2ff", height = 30 })
 
 	-- Add widgets to the wibox
 	s.mywibox:setup({
-		layout = wibox.layout.align.horizontal,
-		{ -- Left widgets
-			layout = wibox.layout.fixed.horizontal,
-			mylauncher,
-			s.mytaglist,
-			s.mypromptbox,
+		{
+			{ -- Your existing layout starts here
+				layout = wibox.layout.align.horizontal,
+				expand = "none",
+				{ -- Left
+					layout = wibox.layout.fixed.horizontal,
+					mykeyboardlayout,
+					s.mypromptbox,
+				},
+				{ -- Middle
+					s.mytaglist,
+					layout = wibox.layout.fixed.horizontal,
+				},
+				{ -- Right
+					layout = wibox.layout.fixed.horizontal,
+					spacing = 15, -- Space between right-side widgets
+					volume_widget({
+						widget_type = "arc",
+					}),
+					mytextclock,
+					logout_menu_widget({
+
+						onlock = function()
+							awful.spawn.with_shell("i3lock-fancy")
+						end,
+					}),
+					s.mylayoutbox,
+				},
+			},
+			-- This adds padding INSIDE the bar
+			left = 10,
+			right = 10,
+			top = 4,
+			bottom = 4,
+			widget = wibox.container.margin,
 		},
-		s.mytasklist, -- Middle widget
-		{ -- Right widgets
-			layout = wibox.layout.fixed.horizontal,
-			mykeyboardlayout,
-			wibox.widget.systray(),
-			mytextclock,
-			s.mylayoutbox,
-		},
+		bg = "#222436",
+		widget = wibox.container.background,
 	})
 end)
 -- }}}

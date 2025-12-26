@@ -1,6 +1,7 @@
 local gears = require("gears")
 local awful = require("awful")
 
+local volume_widget = require("awesome-wm-widgets.pactl-widget.volume")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup")
 
@@ -9,6 +10,20 @@ local apps = require("core.apps")
 local modkey = apps.modkey
 
 local globalkeys = gears.table.join(
+	awful.key({ modkey, "Shift" }, "n", function()
+		awful.tag
+			.add("New", {
+				screen = awful.screen.focused(),
+				layout = awful.layout.suit.tile,
+			})
+			:view_only()
+	end, { description = "add new tag", group = "tag" }),
+	awful.key({ "Mod1" }, "F3", function()
+		volume_widget:inc(5)
+	end),
+	awful.key({ "Mod1" }, "F2", function()
+		volume_widget:dec(5)
+	end),
 	awful.key({}, "Print", function()
 		awful.util.spawn("flameshot gui")
 	end, { description = "Take Screenshot", group = "makc" }),
