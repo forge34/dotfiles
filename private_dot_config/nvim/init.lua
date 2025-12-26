@@ -5,7 +5,6 @@ require("bluloco").setup({
   transparent = true,
   italics = true,
 })
-vim.cmd("colorscheme bluloco")
 
 -- luasnip config
 require("luasnip.loaders.from_snipmate").load()
@@ -18,7 +17,7 @@ local helpers = require("incline.helpers")
 local devicons = require("nvim-web-devicons")
 require("incline").setup({
   window = {
-    padding = 0,
+    padding = 4,
     margin = { horizontal = 0 },
   },
   render = function(props)
@@ -62,3 +61,6 @@ require("colorizer").setup({
   -- all the sub-options of filetypes apply to buftypes
   buftypes = {},
 })
+-- This removes the solid background color from Neovim
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })

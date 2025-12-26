@@ -8,4 +8,14 @@ snippet rrh "add request handler" b
 snippet arrh "Add async request handler" b
 	async (req:Request,res:Response) => {
 		${0:${VISUAL}}
-	};
+	}
+
+snippet des "Describe (js)"
+	describe('${1:description}', () => {
+		$0
+	})
+
+snippet it "it (js)"
+	it('${1:description}', () =>  {
+		$0
+	})
