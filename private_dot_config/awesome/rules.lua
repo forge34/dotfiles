@@ -17,7 +17,7 @@ local clientbuttons = gears.table.join(
 		awful.mouse.client.resize(c)
 	end)
 )
-
+local tags = require("core.variables").tag_names
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
 local rules = {
@@ -70,13 +70,10 @@ local rules = {
 		},
 		properties = { floating = true },
 	},
-
-	-- Add titlebars to normal clients and dialogs
-	{ rule_any = { type = { "normal", "dialog" } }, properties = { titlebars_enabled = false} },
+	{ rule_any = { type = { "normal", "dialog" } }, properties = { titlebars_enabled = false } },
 
 	-- Set Firefox to always map on the tag named "2" on screen 1.
-	-- { rule = { class = "Firefox" },
-	--   properties = { screen = 1, tag = "2" } },
+	{ rule = { class = "firefox_firefox" }, properties = { screen = 1, tag = tags.browser, floating = false } },
 }
 -- }}}
 return rules

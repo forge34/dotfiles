@@ -9,20 +9,66 @@ local mykeyboardlayout = awful.widget.keyboardlayout()
 -- local mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon, menu = mymainmenu })
 local volume_widget = require("awesome-wm-widgets.pactl-widget.volume")
 
-local s_width = awful.screen.focused().geometry.width
+local margin = 20
+local function create_clock_widget(s)
+	local time_text = wibox.widget.textclock('<span font="Inter Bold 54" foreground="#c0caf5">%H:%M:%S</span>', 1)
+	local date_text = wibox.widget.textclock('<span font="Inter Medium 14" foreground="#7aa2f7">%A, %B %d</span>', 60)
+
+	local width = 400
+	local height = 180
+
+	local third_width = s.geometry.width / 3
+	local target_x = s.geometry.x + (third_width / 2) - (width / 2) + margin
+	local clock_container = wibox({
+		screen = s,
+		x = target_x,
+		y = 100,
+		width = width,
+		height = height,
+		bg = "#222436AA",
+		ontop = false,
+		visible = true,
+		border_width = 2,
+		border_color = "#3d59a1", -- Bluloco Blue border
+		type = "dock",
+	})
+
+	clock_container.shape = function(cr, w, h)
+		gears.shape.rounded_rect(cr, w, h, 16)
+	end
+
+	clock_container:setup({
+		{
+			{
+				time_text,
+				date_text,
+				layout = wibox.layout.fixed.vertical,
+				spacing = margin,
+			},
+			valign = "center",
+			halign = "center",
+			widget = wibox.container.place,
+		},
+		widget = wibox.container.background,
+	})
+end
 local function create_fetch_widget(s)
+	local width = 380
+	local height = 280
+	local third_width = s.geometry.width / 3
+	local target_x = s.geometry.x + (third_width * 2) + (third_width / 2) - (width / 2)
 	local fetch_container = wibox({
 		screen = s,
-		x = (s_width / 5) * 4 - 200,
+		x = target_x,
 		y = 100,
-		width = 380,
-		height = 280,
-		bg = "#222436", -- Solid Neovim Navy (removes blur issues)
-		border_width = 2, -- Solid border
+		width = width,
+		height = height,
+		bg = "#222436AA",
+		border_width = 2,
 		border_color = "#3d59a1", -- Bluloco Blue border
 		ontop = false,
 		visible = true,
-		type = "desktop",
+		type = "dock",
 	})
 
 	-- Shape the box with slight rounding to match your windows
@@ -154,15 +200,15 @@ local function set_wallpaper(s)
 end
 
 screen.connect_signal("property::geometry", set_wallpaper)
-
+local tags = require("core.variables").tag_names
 awful.screen.connect_for_each_screen(function(s)
 	-- Wallpaper
 	set_wallpaper(s)
 	create_fetch_widget(s)
-	-- awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
-	local names = { " Terminal", " Browser", " Edtior" }
+	create_clock_widget(s)
+	local names = { tags.terminal, tags.browser, tags.editor, tags.website_preview, tags.kde_connect, tags.scratch }
 	local l = awful.layout.suit
-	local layouts = { l.tile, l.tile, l.floating, l.floating, l.floating }
+	local layouts = { l.tile, l.max, l.tile.bottom, l.max, l.tile, l.tile }
 	awful.tag(names, s, layouts)
 	-- Create a promptbox for each screen
 	s.mypromptbox = awful.widget.prompt()
