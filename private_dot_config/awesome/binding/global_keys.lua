@@ -10,6 +10,12 @@ local apps = require("core.apps")
 local modkey = apps.modkey
 
 local globalkeys = gears.table.join(
+	awful.key({ modkey }, "e", function()
+		awful.spawn("rofi -modi emoji -show emoji")
+	end, { description = "Show emoji selector" }),
+	awful.key({ modkey }, "v", function()
+		awful.spawn("copyq toggle")
+	end),
 	awful.key({ modkey, "Shift" }, "n", function()
 		awful.tag
 			.add("New", {
@@ -30,7 +36,7 @@ local globalkeys = gears.table.join(
 	awful.key({ "Shift" }, "Alt_L", function() end),
 	awful.key({ modkey }, "d", function()
 		awful.spawn("rofi -show drun -show-icons")
-	end, { description = "Show rofi window" }),
+	end, { description = "Show rofi window", group = "launcher" }),
 	awful.key({ modkey }, "s", hotkeys_popup.show_help, { description = "show help", group = "awesome" }),
 	awful.key({ modkey }, "Left", awful.tag.viewprev, { description = "view previous", group = "tag" }),
 	awful.key({ modkey }, "Right", awful.tag.viewnext, { description = "view next", group = "tag" }),
