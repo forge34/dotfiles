@@ -5,12 +5,28 @@ require("bluloco").setup({
   transparent = true,
   italics = true,
 })
+vim.filetype.add({
+  extension = {
+    y = "c",
+    l = "c",
+  },
+})
 
 -- luasnip config
 require("luasnip.loaders.from_snipmate").load()
 require("luasnip.loaders.from_vscode").lazy_load()
 
 require("lspconfig").prismals.setup({})
+-- vim.lsp.config("eslint", {
+--   settings = {
+--     workingDirectory = { mode = "location" },
+--   },
+-- })
+-- require("lspconfig").eslint.setup({
+--   root_dir = function(fname)
+--     return require("lspconfig.util").root_pattern("eslint.config.js", ".eslintrc", "package.json")(fname)
+--   end,
+-- })
 
 -- incline nvim
 local helpers = require("incline.helpers")
