@@ -74,3 +74,29 @@ end, { silent = true })
 -- DiffView
 vim.keymap.set("n", ",d", "<cmd>DiffviewOpen<cr>", { desc = "Repo diff" })
 vim.keymap.set("n", ",c", "<cmd>DiffviewClose<cr>", { desc = "Close Diff View" })
+
+-- Open a dialog of git commits via Snacks, then open the selection in Diffview
+vim.keymap.set("n", ",g", function()
+  -- Check if Snacks picker is available
+  local has_snacks, snacks = pcall(require, "snacks")
+  if not has_snacks then
+    vim.notify("Snacks.nvim not found", vim.log.levels.ERROR)
+    return
+  end
+
+  snacks.picker.git_log({
+    confirm = function(picker, item)
+      -- Close the picker dialog first
+      picker:close()
+
+      -- Extract the commit hash
+      if item and item.commit then
+        local hash = item.commit
+        -- Open Diffview comparing the commit to its parent (~1)
+        vim.cmd("DiffviewOpen " .. hash .. "~1.." .. hash)
+      else
+        vim.notify("Could not retrieve commit hash", vim.log.levels.WARN)
+      end
+    end,
+  })
+end, { desc = "Git Log (Diffview)" })
