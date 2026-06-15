@@ -38,6 +38,8 @@ map("n", "sd", "<C-w>c", desc("Delete window"))
 map("n", "<A-UP>", ":m -2<CR>", desc("move line up"))
 map("n", "<A-DOWN>", ":m +1<CR>", desc("move line down"))
 
+map("x", "<A-UP>", ":m '<-2<CR>gv=gv", desc("move selection up"))
+map("x", "<A-DOWN>", ":m '>+1<CR>gv=gv", desc("move selection down"))
 -- Floatterm
 map("n", "<F7>", string.format(":FloatermNew %s <CR>", get_git_root()), desc("Open Floatterm"))
 map("t", "<F7>", "<C-\\><C-n>:FloatermNew<CR>", desc("Open Floatterm"))
@@ -68,3 +70,7 @@ vim.keymap.set({ "i", "s" }, "<C-E>", function()
     ls.change_choice(1)
   end
 end, { silent = true })
+
+-- DiffView
+vim.keymap.set("n", ",d", "<cmd>DiffviewOpen<cr>", { desc = "Repo diff" })
+vim.keymap.set("n", ",c", "<cmd>DiffviewClose<cr>", { desc = "Close Diff View" })
